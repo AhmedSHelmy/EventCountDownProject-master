@@ -69,11 +69,35 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.event != null ? 'Edit Event' : 'Add Event'),
+        title: Text(widget.event != null ? 'Edit Event' : 'Add Event', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF0B698B),
+                Color(0xFF0396A6),
+                Color(0xFF9CD3D8),
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save, color: Colors.black),
             onPressed: _saveEvent,
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.black),
+            tooltip: 'Settings',
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
           ),
         ],
       ),
@@ -102,22 +126,22 @@ class _EventPageState extends State<EventPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 4,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 'Event Date: ${_selectedDate.toLocal()}'.split(' ')[0],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
                   final DateTime? picked = await showDatePicker(
@@ -132,7 +156,7 @@ class _EventPageState extends State<EventPage> {
                     });
                   }
                 },
-                child: Text('Select date'),
+                child: const Text('Select date'),
               ),
             ],
           ),

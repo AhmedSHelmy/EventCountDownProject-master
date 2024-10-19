@@ -1,57 +1,78 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/event_cubit.dart';
 import '../models/event_model.dart';
-import '../screens/event_page.dart'; // Import the EventPage
-import '../bloc/event_cubit.dart'; // Import the EventCubit
-import 'package:flutter_bloc/flutter_bloc.dart'; // Import Bloc for accessing the EventCubit
+import 'event_page.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final Event event;
 
-  EventDetailsPage({required this.event});
+  const EventDetailsPage({Key? key, required this.event}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(event.title),
+        title: Text(event.title, style: const TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF0B698B),
+                Color(0xFF0396A6),
+                Color(0xFF9CD3D8),
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit, color: Colors.black),
+            tooltip: 'Edit Event',
             onPressed: () {
-              // Navigate to the EventPage to edit the event
+              // Navigate to EventPage for editing
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => EventPage(event: event), // Pass the current event
+                  builder: (_) => EventPage(event: event),
                 ),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete, color: Colors.black),
+            tooltip: 'Delete Event',
             onPressed: () {
-              // Confirm deletion
+              // Show confirmation dialog for deletion
               showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text('Delete Event'),
-                    content: Text('Are you sure you want to delete this event?'),
+                    title: const Text('Confirm Delete'),
+                    content: const Text('Are you sure you want to delete this event?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context), // Cancel
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
                         onPressed: () {
-                          // Call delete function
                           context.read<EventCubit>().deleteEvent(event.id!);
                           Navigator.pop(context); // Close dialog
                           Navigator.pop(context); // Go back to event list
                         },
-                        child: Text('Delete'),
+                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF0B698B)), // Set color to match app bar
+                        child: const Text('Yes'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close the dialog
+                        },
+                        style: TextButton.styleFrom(foregroundColor: const Color(0xFF0B698B)), // Set color to match app bar
+                        child: const Text('No'),
                       ),
                     ],
                   );
@@ -66,24 +87,21 @@ class EventDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Displaying the image
             event.imagePath.isNotEmpty
-                ? Image.file(File(event.imagePath))
-                : Image.asset(
-              'assets/images/default_event_image.png',
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 16),
-            Text(
+                ? Image.file(File(event.imagePath)) // Display the event image
+                : Image.asset('assets/images/default_event_image.png'),
+            const SizedBox(height: 16),
+            const Text(
               'Description:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.bold), // Bold for the description header
             ),
-            Text(event.description),
-            SizedBox(height: 16),
-            Text(
-              'Date: ${DateFormat('yMMMd').format(event.date)}',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            Text(event.description), // Normal content for description
+            const SizedBox(height: 8),
+            const Text(
+              'Date:',
+              style: TextStyle(fontWeight: FontWeight.bold), // Bold for the date header
             ),
+            Text('${event.date.month.toString().padLeft(2, '0')} ${event.date.day.toString()}, ${event.date.year}'), // Normal content for date
           ],
         ),
       ),
